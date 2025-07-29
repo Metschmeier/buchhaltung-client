@@ -1,0 +1,40 @@
+<h2>Partnerliste</h2>
+<ul>
+  <li *ngFor="let p of partners">
+    {{ p.name }} ({{ p.kontonummer }}) – {{ p.eMail }}
+    <button (click)="editPartner(p)">Bearbeiten</button>
+    <button (click)="deletePartner(p.id)">Löschen</button>
+  </li>
+</ul>
+
+<h3>{{ selectedPartner.id === 0 ? 'Neuer Partner' : 'Partner bearbeiten' }}</h3>
+
+<form (ngSubmit)="savePartner()">
+  <label>
+    Name:
+    <input [(ngModel)]="selectedPartner.name" name="name" required />
+  </label><br />
+
+  <label>
+    Kontonummer:
+    <input [(ngModel)]="selectedPartner.kontonummer" name="kontonummer" required />
+  </label><br />
+
+  <label>
+    Typ:
+    <input [(ngModel)]="selectedPartner.typ" name="typ" />
+  </label><br />
+
+  <label>
+    Adresse:
+    <input [(ngModel)]="selectedPartner.adresse" name="adresse" />
+  </label><br />
+
+  <label>
+    E-Mail:
+    <input [(ngModel)]="selectedPartner.eMail" name="eMail" type="email" />
+  </label><br />
+
+  <button type="submit">Speichern</button>
+  <button type="button" (click)="cancelEdit()">Abbrechen</button>
+</form>
