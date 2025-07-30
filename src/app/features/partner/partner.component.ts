@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { PartnerService } from '../../core/services/partner.service';
 import { Partner } from '../../core/types/partner.type';
 
@@ -8,13 +8,23 @@ import { Partner } from '../../core/types/partner.type';
   selector: 'app-partner',
   standalone: true,
   templateUrl: './partner.component.html',
-  imports: [CommonModule, FormsModule]
+  styleUrls: ['./partner.component.css'],
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class PartnerComponent implements OnInit {
   partners: Partner[] = [];
-  selectedPartner: Partner = this.createEmptyPartner();
+  form: FormGroup;
 
-  constructor(private partnerService: PartnerService) {}
+  constructor(private partnerService: PartnerService, private fb: FormBuilder) {
+    this.form = this.fb.group({
+      id: [0],
+      kontonummer: ['', Validators.required],
+      name: ['', Validators.required],
+      typ: [''],
+      adresse: [''],
+      eMail: ['', [Validators.email]]
+    });
+  }
 
   ngOnInit(): void {
     this.loadPartners();
@@ -26,47 +36,47 @@ export class PartnerComponent implements OnInit {
     });
   }
 
-  createEmptyPartner(): Partner {
-    return {
-      id: 0,
-      kontonummer: '',
-      name: '',
-      typ: '',
-      adresse: '',
-      eMail: ''
-    };
-  }
-
   savePartner(): void {
-    if (this.selectedPartner.id === 0) {
-      this.partnerService.create(this.selectedPartner).subscribe(() => {
+    if (this.form.invalid) return;
+
+    const partner: Partner = this.form.value;
+
+    if (partner.id === 0) {
+      this.partnerService.create(partner).subscribe(() => {
         this.loadPartners();
-        this.selectedPartner = this.createEmptyPartner();
+        this.resetForm();
       });
     } else {
-      this.partnerService.update(this.selectedPartner.id, this.selectedPartner).subscribe(() => {
+      this.partnerService.update(partner.id, partner).subscribe(() => {
         this.loadPartners();
-        this.selectedPartner = this.createEmptyPartner();
+        this.resetForm();
       });
     }
   }
 
   editPartner(partner: Partner): void {
-    this.selectedPartner = { ...partner };
+    this.form.setValue({ ...partner });
   }
 
   deletePartner(id: number): void {
     if (confirm('Wirklich löschen?')) {
       this.partnerService.delete(id).subscribe(() => {
         this.loadPartners();
-        if (this.selectedPartner.id === id) {
-          this.selectedPartner = this.createEmptyPartner();
+        if (this.form.value.id === id) {
+          this.resetForm();
         }
       });
     }
   }
 
-  cancelEdit(): void {
-    this.selectedPartner = this.createEmptyPartner();
+  resetForm(): void {
+    this.form.reset({
+      id: 0,
+      kontonummer: '',
+      name: '',
+      typ: '',
+      adresse: '',
+      eMail: ''
+    });
   }
 }

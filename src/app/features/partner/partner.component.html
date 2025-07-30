@@ -7,34 +7,34 @@
   </li>
 </ul>
 
-<h3>{{ selectedPartner.id === 0 ? 'Neuer Partner' : 'Partner bearbeiten' }}</h3>
+<h3>{{ form.value.id === 0 ? 'Neuer Partner' : 'Partner bearbeiten' }}</h3>
 
-<form (ngSubmit)="savePartner()">
+<form [formGroup]="form" (ngSubmit)="savePartner()">
   <label>
     Name:
-    <input [(ngModel)]="selectedPartner.name" name="name" required />
+    <input formControlName="name" />
   </label><br />
 
   <label>
     Kontonummer:
-    <input [(ngModel)]="selectedPartner.kontonummer" name="kontonummer" required />
+    <input formControlName="kontonummer" />
   </label><br />
 
   <label>
     Typ:
-    <input [(ngModel)]="selectedPartner.typ" name="typ" />
+    <input formControlName="typ" />
   </label><br />
 
   <label>
     Adresse:
-    <input [(ngModel)]="selectedPartner.adresse" name="adresse" />
+    <input formControlName="adresse" />
   </label><br />
 
   <label>
     E-Mail:
-    <input [(ngModel)]="selectedPartner.eMail" name="eMail" type="email" />
+    <input formControlName="eMail" type="email" />
   </label><br />
 
-  <button type="submit">Speichern</button>
-  <button type="button" (click)="cancelEdit()">Abbrechen</button>
+  <button type="submit" [disabled]="form.invalid">Speichern</button>
+  <button type="button" (click)="resetForm()">Abbrechen</button>
 </form>
