@@ -10,31 +10,48 @@
 <h3>{{ form.value.id === 0 ? 'Neuer Partner' : 'Partner bearbeiten' }}</h3>
 
 <form [formGroup]="form" (ngSubmit)="savePartner()">
+
   <label>
     Name:
     <input formControlName="name" />
+    <span *ngIf="form.controls.name.invalid && form.controls.name.touched">
+      Name ist erforderlich.
+    </span>
   </label><br />
 
   <label>
     Kontonummer:
     <input formControlName="kontonummer" />
+    <span *ngIf="form.controls.kontonummer.invalid && form.controls.kontonummer.touched">
+      Kontonummer ist erforderlich.
+    </span>
   </label><br />
 
   <label>
     Typ:
     <input formControlName="typ" />
+    <span *ngIf="form.controls.typ.invalid && form.controls.typ.touched">
+      Der Typ des Partners ist erforderlich.
+    </span>
   </label><br />
 
   <label>
     Adresse:
     <input formControlName="adresse" />
+    <span *ngIf="form.controls.adresse.invalid && form.controls.adresse.touched">
+      Eine Adresse ist erforderlich.
+    </span>
   </label><br />
 
   <label>
     E-Mail:
     <input formControlName="eMail" type="email" />
+    <span *ngIf="form.controls.eMail.errors?.['email'] && form.controls.eMail.touched">
+      Keine gültige E-Mail-Adresse.
+    </span>
   </label><br />
 
   <button type="submit" [disabled]="form.invalid">Speichern</button>
-  <button type="button" (click)="resetForm()">Abbrechen</button>
+  <button type="button" (click)="form.reset()">Abbrechen</button>
+
 </form>

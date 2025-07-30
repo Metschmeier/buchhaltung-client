@@ -1,8 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { PartnerService } from '../../core/services/partner.service';
 import { Partner } from '../../core/types/partner.type';
+
+interface PartnerForm {
+  id: FormControl<number>;
+  kontonummer: FormControl<string>;
+  name: FormControl<string>;
+  typ: FormControl<string>;
+  adresse: FormControl<string>;
+  eMail: FormControl<string>;
+}
 
 @Component({
   selector: 'app-partner',
@@ -12,19 +21,18 @@ import { Partner } from '../../core/types/partner.type';
   imports: [CommonModule, ReactiveFormsModule]
 })
 export class PartnerComponent implements OnInit {
-  partners: Partner[] = [];
-  form: FormGroup;
+  private partnerService = inject(PartnerService);
 
-  constructor(private partnerService: PartnerService, private fb: FormBuilder) {
-    this.form = this.fb.group({
-      id: [0],
-      kontonummer: ['', Validators.required],
-      name: ['', Validators.required],
-      typ: [''],
-      adresse: [''],
-      eMail: ['', [Validators.email]]
-    });
-  }
+  partners: Partner[] = [];
+
+  form: FormGroup<PartnerForm> = new FormGroup<PartnerForm>({
+    id: new FormControl(0, { nonNullable: true }),
+    kontonummer: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    name: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    typ: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    adresse: new FormControl('', { validators: Validators.required, nonNullable: true }),
+    eMail: new FormControl('', { validators: Validators.email, nonNullable: true })
+  });
 
   ngOnInit(): void {
     this.loadPartners();
@@ -39,17 +47,17 @@ export class PartnerComponent implements OnInit {
   savePartner(): void {
     if (this.form.invalid) return;
 
-    const partner: Partner = this.form.value;
+    const partner: Partner = this.form.getRawValue();
 
     if (partner.id === 0) {
       this.partnerService.create(partner).subscribe(() => {
         this.loadPartners();
-        this.resetForm();
+        this.form.reset();
       });
     } else {
       this.partnerService.update(partner.id, partner).subscribe(() => {
         this.loadPartners();
-        this.resetForm();
+        this.form.reset();
       });
     }
   }
@@ -63,20 +71,9 @@ export class PartnerComponent implements OnInit {
       this.partnerService.delete(id).subscribe(() => {
         this.loadPartners();
         if (this.form.value.id === id) {
-          this.resetForm();
+          this.form.reset();
         }
       });
     }
-  }
-
-  resetForm(): void {
-    this.form.reset({
-      id: 0,
-      kontonummer: '',
-      name: '',
-      typ: '',
-      adresse: '',
-      eMail: ''
-    });
   }
 }
