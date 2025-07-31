@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { PartnerService } from '../../core/services/partner.service';
+import { PartnerFacade } from '../../core/facades/partner.facade';
 import { Partner } from '../../core/types/partner.type';
 
 interface PartnerForm {
@@ -21,9 +21,9 @@ interface PartnerForm {
   imports: [CommonModule, ReactiveFormsModule]
 })
 export class PartnerComponent implements OnInit {
-  private partnerService = inject(PartnerService);
+  private partnerFacade = inject(PartnerFacade);
 
-  partners: Partner[] = [];
+  partners$ = this.partnerFacade.partners$;
 
   form: FormGroup<PartnerForm> = new FormGroup<PartnerForm>({
     id: new FormControl(0, { nonNullable: true }),
@@ -35,13 +35,7 @@ export class PartnerComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.loadPartners();
-  }
-
-  loadPartners(): void {
-    this.partnerService.getAll().subscribe(data => {
-      this.partners = data;
-    });
+    // Kein manuelles Laden nötig, da partners$ Observable im Template genutzt wird
   }
 
   savePartner(): void {
@@ -50,13 +44,11 @@ export class PartnerComponent implements OnInit {
     const partner: Partner = this.form.getRawValue();
 
     if (partner.id === 0) {
-      this.partnerService.create(partner).subscribe(() => {
-        this.loadPartners();
+      this.partnerFacade.create(partner).subscribe(() => {
         this.form.reset();
       });
     } else {
-      this.partnerService.update(partner.id, partner).subscribe(() => {
-        this.loadPartners();
+      this.partnerFacade.update(partner.id, partner).subscribe(() => {
         this.form.reset();
       });
     }
@@ -68,8 +60,7 @@ export class PartnerComponent implements OnInit {
 
   deletePartner(id: number): void {
     if (confirm('Wirklich löschen?')) {
-      this.partnerService.delete(id).subscribe(() => {
-        this.loadPartners();
+      this.partnerFacade.delete(id).subscribe(() => {
         if (this.form.value.id === id) {
           this.form.reset();
         }
