@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Partner } from '../types/partner.type';  // Pfad anpassen!
+import { Partner } from '../types/partner.type'; 
 
 @Injectable({
   providedIn: 'root'

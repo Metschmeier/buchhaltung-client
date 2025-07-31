@@ -1,0 +1,33 @@
+<h2>Kategorieliste</h2>
+<ul>
+  <li *ngFor="let k of kategorien$ | async">
+    {{ k.kategorienummer }} {{ k.kategorie }}
+    <button (click)="editKategorie(k)">Bearbeiten</button>
+    <button (click)="deleteKategorie(k.id)">Löschen</button>
+  </li>
+</ul>
+
+<h3>{{ form.value.id === 0 ? 'Neue Kategorie' : 'Kategorie bearbeiten' }}</h3>
+
+<form [formGroup]="form" (ngSubmit)="saveKategorie()">
+
+  <label>
+    KategorieNummer:
+    <input formControlName="kategorienummer" />
+    <span *ngIf="form.controls.kategorienummer.invalid && form.controls.kategorienummer.touched && form.controls.kategorienummer.dirty">
+      Eine Kategorie Nummer ist erforderlich.
+    </span>
+  </label><br />
+
+  <label>
+    Kategorie:
+    <input formControlName="kategorie" />
+    <span *ngIf="form.controls.kategorie.invalid && form.controls.kategorie.touched">
+      Die Kategorie ist erforderlich.
+    </span>
+  </label><br />
+
+  <button type="submit" [disabled]="form.invalid">Speichern</button>
+  <button type="button" (click)="form.reset()">Abbrechen</button>
+
+</form>
