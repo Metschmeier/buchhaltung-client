@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { PartnerService } from '../services/partner.service';
 import { Partner } from '../types/partner.type';
@@ -7,11 +7,8 @@ import { Partner } from '../types/partner.type';
   providedIn: 'root'
 })
 export class PartnerFacade {
-  readonly partners$: Observable<Partner[]>;
-
-  constructor(private partnerService: PartnerService) {
-    this.partners$ = this.partnerService.getAll();
-  }
+  private partnerService = inject(PartnerService);
+  readonly partners$: Observable<Partner[]> = this.partnerService.getAll();
 
   create(partner: Partner): Observable<Partner> {
     return this.partnerService.create(partner);

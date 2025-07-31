@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { KostenstelleService } from '../services/kostenstelle.service';
 import { Kostenstelle } from '../types/kostenstelle.types';
@@ -7,11 +7,8 @@ import { Kostenstelle } from '../types/kostenstelle.types';
   providedIn: 'root'
 })
 export class KostenstelleFacade {
-  readonly kostenstellen$: Observable<Kostenstelle[]>;
-
-  constructor(private kostenstelleService: KostenstelleService) {
-    this.kostenstellen$ = this.kostenstelleService.getAll();
-  }
+  private kostenstelleService = inject(KostenstelleService);
+  readonly kostenstellen$: Observable<Kostenstelle[]> = this.kostenstelleService.getAll();
 
   create(kostenstelle: Kostenstelle): Observable<Kostenstelle> {
     return this.kostenstelleService.create(kostenstelle);

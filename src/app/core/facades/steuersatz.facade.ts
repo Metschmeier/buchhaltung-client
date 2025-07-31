@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SteuersatzService } from '../services/steuersatz.service';
 import { Steuersatz } from '../types/steuersatz.type';
@@ -7,11 +7,8 @@ import { Steuersatz } from '../types/steuersatz.type';
   providedIn: 'root'
 })
 export class SteuersatzFacade {
-  readonly steuersaetze$: Observable<Steuersatz[]>;
-
-  constructor(private steuersatzService: SteuersatzService) {
-    this.steuersaetze$ = this.steuersatzService.getAll();
-  }
+  private steuersatzService = inject(SteuersatzService);
+  readonly steuersaetze$: Observable<Steuersatz[]> = this.steuersatzService.getAll();
 
   create(steuersatz: Steuersatz): Observable<Steuersatz> {
     return this.steuersatzService.create(steuersatz);

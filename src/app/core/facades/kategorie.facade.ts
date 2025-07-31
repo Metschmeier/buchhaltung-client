@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { KategorieService } from '../services/kategorie.service';
 import { Kategorie } from '../types/kategorie.type';
@@ -7,11 +7,8 @@ import { Kategorie } from '../types/kategorie.type';
   providedIn: 'root'
 })
 export class KategorieFacade {
-  readonly kategorien$: Observable<Kategorie[]>;
-
-  constructor(private kategorieService: KategorieService) {
-    this.kategorien$ = this.kategorieService.getAll();
-  }
+  private kategorieService = inject(KategorieService);
+  readonly kategorien$: Observable<Kategorie[]> = this.kategorieService.getAll();
 
   create(kategorie: Kategorie): Observable<Kategorie> {
     return this.kategorieService.create(kategorie);
