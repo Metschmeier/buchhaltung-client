@@ -7,7 +7,7 @@ import { Partner } from '../types/partner.type';
   providedIn: 'root'
 })
 export class PartnerService {
-  private baseUrl = 'https://localhost:5001/api/partner';
+  private baseUrl = 'http://localhost:5000/api/partner';
 
   constructor(private http: HttpClient) {}
 
