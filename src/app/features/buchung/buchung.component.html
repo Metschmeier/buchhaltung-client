@@ -1,0 +1,98 @@
+<h2>Buchungen</h2>
+<ul>
+  <li *ngFor="let b of buchungen$ | async">
+    {{ b.datum | date }} - {{ b.beschreibung }} - {{ b.betragnetto | currency }}
+    <button (click)="editBuchung(b)">Bearbeiten</button>
+    <button (click)="deleteBuchung(b.id)" [disabled]="b.locked">Löschen</button>
+  </li>
+</ul>
+
+<h3>{{ form.value.id === 0 ? 'Neue Buchung' : 'Buchung bearbeiten' }}</h3>
+
+<form [formGroup]="form" (ngSubmit)="saveBuchung()">
+
+  <label>
+    Datum:
+    <input type="date" formControlName="datum" />
+    <span *ngIf="form.controls.datum.invalid && form.controls.datum.touched">
+      Datum ist erforderlich.
+    </span>
+  </label><br />
+
+  <label>
+    Typ:
+    <input formControlName="typ" />
+    <span *ngIf="form.controls.typ.invalid && form.controls.typ.touched">
+      Typ ist erforderlich.
+    </span>
+  </label><br />
+
+  <label>
+    Beschreibung:
+    <input formControlName="beschreibung" />
+    <span *ngIf="form.controls.beschreibung.invalid && form.controls.beschreibung.touched">
+      Beschreibung ist erforderlich.
+    </span>
+  </label><br />
+
+  <label>
+    Betrag netto:
+    <input type="number" formControlName="betragnetto" step="0.01" />
+    <span *ngIf="form.controls.betragnetto.invalid && form.controls.betragnetto.touched">
+      Bitte einen positiven Betrag eingeben.
+    </span>
+  </label><br />
+
+  <label>
+    Partner:
+    <select formControlName="partnerid">
+      <option value="">Bitte wählen</option>
+      <option *ngFor="let p of partners$ | async" [value]="p.id">{{ p.name }}</option>
+    </select>
+    <span *ngIf="form.controls.partnerid.invalid && form.controls.partnerid.touched">
+      Partner ist erforderlich.
+    </span>
+  </label><br />
+
+  <label>
+    Kategorie:
+    <select formControlName="kategorieid">
+      <option value="">Bitte wählen</option>
+      <option *ngFor="let k of kategorien$ | async" [value]="k.id">{{ k.kategorie }}</option>
+    </select>
+    <span *ngIf="form.controls.kategorieid.invalid && form.controls.kategorieid.touched">
+      Kategorie ist erforderlich.
+    </span>
+  </label><br />
+
+  <label>
+    Kostenstelle:
+    <select formControlName="kostenstelleid">
+      <option value="">Bitte wählen</option>
+      <option *ngFor="let ks of kostenstellen$ | async" [value]="ks.id">{{ ks.kostenstelle }}</option>
+    </select>
+    <span *ngIf="form.controls.kostenstelleid.invalid && form.controls.kostenstelleid.touched">
+      Kostenstelle ist erforderlich.
+    </span>
+  </label><br />
+
+  <label>
+    Steuersatz:
+    <select formControlName="steuersatzid">
+      <option value="">Bitte wählen</option>
+      <option *ngFor="let st of steuersaetze$ | async" [value]="st.id">{{ st.bezeichnung }} ({{ st.prozentsatz }}%)</option>
+    </select>
+    <span *ngIf="form.controls.steuersatzid.invalid && form.controls.steuersatzid.touched">
+      Steuersatz ist erforderlich.
+    </span>
+  </label><br />
+
+  <label>
+    Gesperrt:
+    <input type="checkbox" [checked]="form.value.locked" disabled />
+  </label><br />
+
+  <button type="submit" [disabled]="form.invalid || form.value.locked">Speichern</button>
+  <button type="button" (click)="form.reset()">Abbrechen</button>
+
+</form>

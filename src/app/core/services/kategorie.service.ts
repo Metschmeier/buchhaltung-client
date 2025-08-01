@@ -7,7 +7,7 @@ import { Kategorie } from '../types/kategorie.type';
   providedIn: 'root'
 })
 export class KategorieService {
-  private baseUrl = 'https://localhost:5001/api/kategorie';
+  private baseUrl = 'http://localhost:5000/api/kategorie';
 
   constructor(private http: HttpClient) {}
 

@@ -22,7 +22,7 @@ describe('PartnerService', () => {
       expect(data).toEqual(mockData);
     });
 
-    const req = httpMock.expectOne('https://localhost:5001/api/partner');
+    const req = httpMock.expectOne('http://localhost:5000/api/partner');
     expect(req.request.method).toBe('GET');
     req.flush(mockData);
   });
@@ -34,7 +34,7 @@ describe('PartnerService', () => {
       expect(response).toEqual(newPartner);
     });
 
-    const req = httpMock.expectOne('https://localhost:5001/api/partner');
+    const req = httpMock.expectOne('http://localhost:5000/api/partner');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(newPartner);
     req.flush(newPartner);
@@ -50,13 +50,13 @@ describe('PartnerService', () => {
     expect(response).toBeUndefined();
   });
 
-  const req = httpMock.expectOne(`https://localhost:5001/api/partner/${updatedPartner.id}`);
+  const req = httpMock.expectOne(`http://localhost:5000/api/partner/${updatedPartner.id}`);
   expect(req.request.method).toBe('PUT');
   expect(req.request.body).toEqual(updatedPartner);
   req.flush({});
 });
 
-    const req = httpMock.expectOne(`https://localhost:5001/api/partner/${updatedPartner.id}`);
+    const req = httpMock.expectOne(`http://localhost:5000/api/partner/${updatedPartner.id}`);
     expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual(updatedPartner);
     req.flush({}); // Statt null -> {}
@@ -69,7 +69,7 @@ describe('PartnerService', () => {
       expect(response).toBeUndefined();
     });
 
-    const req = httpMock.expectOne(`https://localhost:5001/api/partner/${id}`);
+    const req = httpMock.expectOne(`http://localhost:5000/api/partner/${id}`);
     expect(req.request.method).toBe('DELETE');
     req.flush({}); // Statt null -> {}
   });

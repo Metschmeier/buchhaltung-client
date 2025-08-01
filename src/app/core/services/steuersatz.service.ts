@@ -7,7 +7,7 @@ import { Steuersatz } from '../types/steuersatz.type';
   providedIn: 'root'
 })
 export class SteuersatzService {
-  private baseUrl = 'https://localhost:5001/api/steuersatz';
+  private baseUrl = 'http://localhost:5000/api/steuersatz';
 
   constructor(private http: HttpClient) {}
 

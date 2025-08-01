@@ -7,7 +7,7 @@ import { Kostenstelle } from '../types/kostenstelle.types';
   providedIn: 'root'
 })
 export class KostenstelleService {
-  private baseUrl = 'https://localhost:5001/api/kostenstelle';
+  private baseUrl = 'http://localhost:5000/api/kostenstelle';
 
   constructor(private http: HttpClient) {}
 
