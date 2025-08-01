@@ -1,10 +1,12 @@
 <h2>Partnerliste</h2>
 <ul>
-  <li *ngFor="let p of partners$ | async">
-    {{ p.name }} ({{ p.kontonummer }}) – {{ p.eMail }}
-    <button (click)="editPartner(p)">Bearbeiten</button>
-    <button (click)="deletePartner(p.id)">Löschen</button>
-  </li>
+  @for (p of partners$ | async; track p.id) {
+    <li>
+      {{ p.name }} ({{ p.kontonummer }}) – {{ p.eMail }}
+      <button (click)="editPartner(p)">Bearbeiten</button>
+      <button (click)="deletePartner(p.id)">Löschen</button>
+    </li>
+  }
 </ul>
 
 <h3>{{ form.value.id === 0 ? 'Neuen Partner erstellen' : 'Partner bearbeiten' }}</h3>
@@ -14,41 +16,41 @@
   <label>
     Kontonummer:
     <input formControlName="kontonummer" />
-    <span *ngIf="form.controls.kontonummer.invalid && form.controls.kontonummer.touched">
-      Die Kontonummer ist erforderlich.
-    </span>
+    @if (form.controls.kontonummer.invalid && form.controls.kontonummer.touched) {
+      <span>Die Kontonummer ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Name:
     <input formControlName="name" />
-    <span *ngIf="form.controls.name.invalid && form.controls.name.touched">
-      Der Name ist erforderlich.
-    </span>
+    @if (form.controls.name.invalid && form.controls.name.touched) {
+      <span>Der Name ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Typ:
     <input formControlName="typ" />
-    <span *ngIf="form.controls.typ.invalid && form.controls.typ.touched">
-      Der Typ ist erforderlich.
-    </span>
+    @if (form.controls.typ.invalid && form.controls.typ.touched) {
+      <span>Der Typ ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Adresse:
     <input formControlName="adresse" />
-    <span *ngIf="form.controls.adresse.invalid && form.controls.adresse.touched">
-      Die Adresse ist erforderlich.
-    </span>
+    @if (form.controls.adresse.invalid && form.controls.adresse.touched) {
+      <span>Die Adresse ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     E-Mail:
     <input formControlName="eMail" type="email" />
-    <span *ngIf="form.controls.eMail.invalid && form.controls.eMail.touched">
-      Bitte eine gültige E-Mail eingeben.
-    </span>
+    @if (form.controls.eMail.invalid && form.controls.eMail.touched) {
+      <span>Bitte eine gültige E-Mail eingeben.</span>
+    }
   </label><br />
 
   <button type="submit" [disabled]="form.invalid">Speichern</button>

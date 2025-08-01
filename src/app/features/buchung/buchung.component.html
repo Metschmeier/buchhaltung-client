@@ -1,10 +1,12 @@
 <h2>Buchungen</h2>
 <ul>
-  <li *ngFor="let b of buchungen$ | async">
-    {{ b.datum | date }} - {{ b.beschreibung }} - {{ b.betragnetto | currency }}
-    <button (click)="editBuchung(b)">Bearbeiten</button>
-    <button (click)="deleteBuchung(b.id)" [disabled]="b.locked">Löschen</button>
-  </li>
+  @for (b of buchungen$ | async; track b.id) {
+    <li>
+      {{ b.datum | date }} - {{ b.beschreibung }} - {{ b.betragnetto | currency }}
+      <button (click)="editBuchung(b)">Bearbeiten</button>
+      <button (click)="deleteBuchung(b.id)" [disabled]="b.locked">Löschen</button>
+    </li>
+  }
 </ul>
 
 <h3>{{ form.value.id === 0 ? 'Neue Buchung' : 'Buchung bearbeiten' }}</h3>
@@ -14,77 +16,85 @@
   <label>
     Datum:
     <input type="date" formControlName="datum" />
-    <span *ngIf="form.controls.datum.invalid && form.controls.datum.touched">
-      Datum ist erforderlich.
-    </span>
+    @if (form.controls.datum.invalid && form.controls.datum.touched) {
+      <span>Datum ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Typ:
     <input formControlName="typ" />
-    <span *ngIf="form.controls.typ.invalid && form.controls.typ.touched">
-      Typ ist erforderlich.
-    </span>
+    @if (form.controls.typ.invalid && form.controls.typ.touched) {
+      <span>Typ ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Beschreibung:
     <input formControlName="beschreibung" />
-    <span *ngIf="form.controls.beschreibung.invalid && form.controls.beschreibung.touched">
-      Beschreibung ist erforderlich.
-    </span>
+    @if (form.controls.beschreibung.invalid && form.controls.beschreibung.touched) {
+      <span>Beschreibung ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Betrag netto:
     <input type="number" formControlName="betragnetto" step="0.01" />
-    <span *ngIf="form.controls.betragnetto.invalid && form.controls.betragnetto.touched">
-      Bitte einen positiven Betrag eingeben.
-    </span>
+    @if (form.controls.betragnetto.invalid && form.controls.betragnetto.touched) {
+      <span>Bitte einen positiven Betrag eingeben.</span>
+    }
   </label><br />
 
   <label>
     Partner:
     <select formControlName="partnerid">
       <option value="">Bitte wählen</option>
-      <option *ngFor="let p of partners$ | async" [value]="p.id">{{ p.name }}</option>
+      @for (p of partners$ | async; track p.id) {
+        <option [value]="p.id">{{ p.name }}</option>
+      }
     </select>
-    <span *ngIf="form.controls.partnerid.invalid && form.controls.partnerid.touched">
-      Partner ist erforderlich.
-    </span>
+    @if (form.controls.partnerid.invalid && form.controls.partnerid.touched) {
+      <span>Partner ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Kategorie:
     <select formControlName="kategorieid">
       <option value="">Bitte wählen</option>
-      <option *ngFor="let k of kategorien$ | async" [value]="k.id">{{ k.kategorie }}</option>
+      @for (k of kategorien$ | async; track k.id) {
+        <option [value]="k.id">{{ k.kategorie }}</option>
+      }
     </select>
-    <span *ngIf="form.controls.kategorieid.invalid && form.controls.kategorieid.touched">
-      Kategorie ist erforderlich.
-    </span>
+    @if (form.controls.kategorieid.invalid && form.controls.kategorieid.touched) {
+      <span>Kategorie ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Kostenstelle:
     <select formControlName="kostenstelleid">
       <option value="">Bitte wählen</option>
-      <option *ngFor="let ks of kostenstellen$ | async" [value]="ks.id">{{ ks.kostenstelle }}</option>
+      @for (ks of kostenstellen$ | async; track ks.id) {
+        <option [value]="ks.id">{{ ks.kostenstelle }}</option>
+      }
     </select>
-    <span *ngIf="form.controls.kostenstelleid.invalid && form.controls.kostenstelleid.touched">
-      Kostenstelle ist erforderlich.
-    </span>
+    @if (form.controls.kostenstelleid.invalid && form.controls.kostenstelleid.touched) {
+      <span>Kostenstelle ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Steuersatz:
     <select formControlName="steuersatzid">
       <option value="">Bitte wählen</option>
-      <option *ngFor="let st of steuersaetze$ | async" [value]="st.id">{{ st.bezeichnung }} ({{ st.prozentsatz }}%)</option>
+      @for (st of steuersaetze$ | async; track st.id) {
+        <option [value]="st.id">{{ st.bezeichnung }} ({{ st.prozentsatz }}%)</option>
+      }
     </select>
-    <span *ngIf="form.controls.steuersatzid.invalid && form.controls.steuersatzid.touched">
-      Steuersatz ist erforderlich.
-    </span>
+    @if (form.controls.steuersatzid.invalid && form.controls.steuersatzid.touched) {
+      <span>Steuersatz ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
