@@ -1,10 +1,12 @@
 <h2>Kostenstelleliste</h2>
 <ul>
-  <li *ngFor="let ks of kostenstellen$ | async">
-    {{ ks.kostenstelle }} {{ ks.beschreibung }}
-    <button (click)="editKostenstelle(ks)">Bearbeiten</button>
-    <button (click)="deleteKostenstelle(ks.id)">Löschen</button>
-  </li>
+  @for (ks of kostenstellen$ | async; track ks.id) {
+    <li>
+      {{ ks.kostenstelle }} {{ ks.beschreibung }}
+      <button (click)="editKostenstelle(ks)">Bearbeiten</button>
+      <button (click)="deleteKostenstelle(ks.id)">Löschen</button>
+    </li>
+  }
 </ul>
 
 <h3>{{ form.value.id === 0 ? 'Neue Kostenstelle' : 'Kostenstelle bearbeiten' }}</h3>
@@ -14,17 +16,17 @@
   <label>
     Kostenstelle:
     <input formControlName="kostenstelle" />
-    <span *ngIf="form.controls.kostenstelle.invalid && form.controls.kostenstelle.touched">
-      Eine Kostenstelle ist erforderlich.
-    </span>
+    @if (form.controls.kostenstelle.invalid && form.controls.kostenstelle.touched) {
+      <span>Eine Kostenstelle ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Beschreibung:
     <input formControlName="beschreibung" />
-    <span *ngIf="form.controls.beschreibung.invalid && form.controls.beschreibung.touched">
-      Eine Beschreibung für für die Kostenstelle ist erforderlich.
-    </span>
+    @if (form.controls.beschreibung.invalid && form.controls.beschreibung.touched) {
+      <span>Eine Beschreibung für für die Kostenstelle ist erforderlich.</span>
+    }
   </label><br />
 
   <button type="submit" [disabled]="form.invalid">Speichern</button>
