@@ -1,0 +1,22 @@
+<h2>Login</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+  <label for="username">Benutzername:</label>
+  <input id="username" formControlName="username" type="text" />
+  @if (form.controls['username'].invalid && form.controls['username'].touched) {
+    <div class="error">Benutzername ist erforderlich.</div>
+  }
+
+  <label for="password">Passwort:</label>
+  <input id="password" formControlName="password" type="password" />
+  @if (form.controls['password'].invalid && form.controls['password'].touched) {
+    <div class="error">Passwort ist erforderlich.</div>
+  }
+
+  @if (errorMessage) {
+    <div class="error">{{ errorMessage }}</div>
+  }
+
+  <button type="submit" [disabled]="form.invalid">Login</button>
+</form>

@@ -60,7 +60,7 @@
     Partner:
     <select formControlName="partnerid">
       <option value="">Bitte wählen</option>
-      @for (p of partners$ | async; track p.id) {
+      @for (p of partners(); track p.id) {
         <option [value]="p.id">{{ p.name }}</option>
       }
     </select>
@@ -73,7 +73,7 @@
     Kategorie:
     <select formControlName="kategorieid">
       <option value="">Bitte wählen</option>
-      @for (k of kategorien$ | async; track k.id) {
+      @for (k of kategorien(); track k.id) {
         <option [value]="k.id">{{ k.kategorie }}</option>
       }
     </select>
@@ -86,7 +86,7 @@
     Kostenstelle:
     <select formControlName="kostenstelleid">
       <option value="">Bitte wählen</option>
-      @for (ks of kostenstellen$ | async; track ks.id) {
+      @for (ks of kostenstellen(); track ks.id) {
         <option [value]="ks.id">{{ ks.kostenstelle }}</option>
       }
     </select>
@@ -99,7 +99,7 @@
     Steuersatz:
     <select formControlName="steuersatzid">
       <option value="">Bitte wählen</option>
-      @for (st of steuersaetze$ | async; track st.id) {
+      @for (st of steuersaetze(); track st.id) {
         <option [value]="st.id">{{ st.bezeichnung }} ({{ st.prozentsatz }}%)</option>
       }
     </select>

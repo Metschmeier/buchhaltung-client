@@ -5,12 +5,16 @@ import { KategorieComponent } from '../app/features/kategorie/kategorie.componen
 import { SteuersatzComponent } from '../app/features/steuersatz/steuersatz.component';
 import { KostenstelleComponent } from '../app/features/kostenstelle/kostenstelle.component';
 import { BuchungComponent } from '../app/features/buchung/buchung.component';
+import { LoginComponent } from '../app/features/login/login.component';
+import { authGuard } from './guards/auth.guard';
 
 export const appRoutes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'partner', component: PartnerComponent },
-  { path: 'kategorie', component: KategorieComponent },
-  { path: 'steuersatz', component: SteuersatzComponent },
-  { path: 'kostenstelle', component: KostenstelleComponent},
-  { path: 'buchung', component: BuchungComponent },
+  { path: 'login', component: LoginComponent },
+  { path: '', component: HomeComponent, canActivate: [authGuard] },
+  { path: 'partner', component: PartnerComponent, canActivate: [authGuard] },
+  { path: 'kategorie', component: KategorieComponent, canActivate: [authGuard] },
+  { path: 'steuersatz', component: SteuersatzComponent, canActivate: [authGuard] },
+  { path: 'kostenstelle', component: KostenstelleComponent, canActivate: [authGuard] },
+  { path: 'buchung', component: BuchungComponent, canActivate: [authGuard] },
+  { path: '**', redirectTo: '' }
 ];
