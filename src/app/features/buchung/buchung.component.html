@@ -1,6 +1,6 @@
-<h2>Buchungen</h2>
+<h2>Alle Buchungen</h2>
 <ul>
-  @for (b of buchungen$ | async; track b.id) {
+  @for (b of buchungen(); track b.id) {
     <li>
       {{ b.datum | date }} - {{ b.beschreibung }} - {{ b.betragnetto | currency }}
       <button (click)="editBuchung(b)">Bearbeiten</button>
@@ -8,6 +8,17 @@
     </li>
   }
 </ul>
+
+<h2>Nur Einkäufe</h2>
+<ul>
+  @for (e of einkaeufe(); track e.id) {
+    <li>
+      {{ e.datum | date }} - {{ e.beschreibung }} - {{ e.betragnetto | currency }}
+    </li>
+  }
+</ul>
+
+<hr />
 
 <h3>{{ form.value.id === 0 ? 'Neue Buchung' : 'Buchung bearbeiten' }}</h3>
 

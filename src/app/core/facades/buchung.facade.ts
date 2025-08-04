@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Injectable, computed, inject, signal, Signal } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import { Buchung } from '../types/buchung.type';
 import { BuchungService } from '../services/buchung.service';
 
@@ -9,8 +9,13 @@ import { BuchungService } from '../services/buchung.service';
 export class BuchungFacade {
   private buchungService = inject(BuchungService);
 
-  private _buchungen = new BehaviorSubject<Buchung[]>([]);
-  readonly buchungen$ = this._buchungen.asObservable();
+  private _buchungen = signal<Buchung[]>([]);
+  readonly buchungen: Signal<Buchung[]> = this._buchungen.asReadonly();
+
+  // Bonus: computed Signal für Einkäufe
+  readonly einkaeufe = computed(() =>
+    this._buchungen().filter(b => b.typ === 'Einkauf')
+  );
 
   constructor() {
     this.loadAll();
@@ -18,15 +23,14 @@ export class BuchungFacade {
 
   loadAll(): void {
     this.buchungService.getAll().subscribe((buchungen) => {
-      this._buchungen.next(buchungen);
+      this._buchungen.set(buchungen);
     });
   }
 
   create(buchung: Buchung): Observable<Buchung> {
     return this.buchungService.create(buchung).pipe(
       tap((neu) => {
-        const aktuelle = this._buchungen.getValue();
-        this._buchungen.next([...aktuelle, neu]);
+        this._buchungen.update((aktuelle) => [...aktuelle, neu]);
       })
     );
   }
@@ -34,12 +38,15 @@ export class BuchungFacade {
   update(id: number, buchung: Buchung): Observable<void> {
     return this.buchungService.update(id, buchung).pipe(
       tap(() => {
-        const aktuelle = this._buchungen.getValue();
-        const index = aktuelle.findIndex((b) => b.id === id);
-        if (index > -1) {
-          aktuelle[index] = buchung;
-          this._buchungen.next([...aktuelle]);
-        }
+        this._buchungen.update((aktuelle) => {
+          const index = aktuelle.findIndex((b) => b.id === id);
+          if (index > -1) {
+            const neue = [...aktuelle];
+            neue[index] = buchung;
+            return neue;
+          }
+          return aktuelle;
+        });
       })
     );
   }
@@ -47,8 +54,7 @@ export class BuchungFacade {
   delete(id: number): Observable<void> {
     return this.buchungService.delete(id).pipe(
       tap(() => {
-        const aktuelle = this._buchungen.getValue();
-        this._buchungen.next(aktuelle.filter((b) => b.id !== id));
+        this._buchungen.update((aktuelle) => aktuelle.filter((b) => b.id !== id));
       })
     );
   }
