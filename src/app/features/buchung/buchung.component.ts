@@ -37,7 +37,9 @@ export class BuchungComponent implements OnInit {
   private kostenstelleFacade = inject(KostenstelleFacade);
   private steuersatzFacade = inject(SteuersatzFacade);
 
-  buchungen$ = this.buchungFacade.buchungen$;
+  readonly buchungen = this.buchungFacade.buchungen;
+  readonly einkaeufe = this.buchungFacade.einkaeufe;
+
   kategorien$ = this.kategorieFacade.kategorien$;
   partners$ = this.partnerFacade.partners$;
   kostenstellen$ = this.kostenstelleFacade.kostenstellen$;
@@ -57,7 +59,6 @@ export class BuchungComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // nichts nötig – Streams kommen direkt aus den Facades
   }
 
   saveBuchung(): void {

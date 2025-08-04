@@ -1,6 +1,6 @@
 <h2>Partnerliste</h2>
 <ul>
-  @for (p of partners$ | async; track p.id) {
+  @for (p of partners(); track p.id) {
     <li>
       {{ p.name }} ({{ p.kontonummer }}) – {{ p.eMail }}
       <button (click)="editPartner(p)">Bearbeiten</button>

@@ -20,7 +20,8 @@ interface KostenstelleForm {
 export class KostenstelleComponent implements OnInit {
   private kostenstelleFacade = inject(KostenstelleFacade);
 
-  kostenstellen$ = this.kostenstelleFacade.kostenstellen$;
+  // Signal statt Observable:
+  kostenstellen = this.kostenstelleFacade.kostenstellen;
 
   form: FormGroup<KostenstelleForm> = new FormGroup<KostenstelleForm>({
     id: new FormControl(0, { nonNullable: true }),
@@ -29,7 +30,6 @@ export class KostenstelleComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // kein manuelles Laden mehr nötig, da kategorien$ direkt aus Facade kommt
   }
 
   saveKostenstelle(): void {
@@ -38,13 +38,9 @@ export class KostenstelleComponent implements OnInit {
     const kostenstelle: Kostenstelle = this.form.getRawValue();
 
     if (kostenstelle.id === 0) {
-      this.kostenstelleFacade.create(kostenstelle).subscribe(() => {
-        this.form.reset();
-      });
+      this.kostenstelleFacade.create(kostenstelle).subscribe(() => this.form.reset());
     } else {
-      this.kostenstelleFacade.update(kostenstelle.id, kostenstelle).subscribe(() => {
-        this.form.reset();
-      });
+      this.kostenstelleFacade.update(kostenstelle.id, kostenstelle).subscribe(() => this.form.reset());
     }
   }
 

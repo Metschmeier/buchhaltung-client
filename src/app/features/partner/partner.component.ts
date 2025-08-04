@@ -23,7 +23,8 @@ interface PartnerForm {
 export class PartnerComponent implements OnInit {
   private partnerFacade = inject(PartnerFacade);
 
-  partners$ = this.partnerFacade.partners$;
+  // Signal statt Observable:
+  partners = this.partnerFacade.partners;
 
   form: FormGroup<PartnerForm> = new FormGroup<PartnerForm>({
     id: new FormControl(0, { nonNullable: true }),
@@ -35,7 +36,6 @@ export class PartnerComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // Kein manuelles Laden nötig, da partners$ Observable im Template genutzt wird
   }
 
   savePartner(): void {
@@ -44,13 +44,9 @@ export class PartnerComponent implements OnInit {
     const partner: Partner = this.form.getRawValue();
 
     if (partner.id === 0) {
-      this.partnerFacade.create(partner).subscribe(() => {
-        this.form.reset();
-      });
+      this.partnerFacade.create(partner).subscribe(() => this.form.reset());
     } else {
-      this.partnerFacade.update(partner.id, partner).subscribe(() => {
-        this.form.reset();
-      });
+      this.partnerFacade.update(partner.id, partner).subscribe(() => this.form.reset());
     }
   }
 

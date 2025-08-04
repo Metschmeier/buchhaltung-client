@@ -1,33 +1,33 @@
 <h2>Steuersatzliste</h2>
 <ul>
-  <li *ngFor="let s of steuersaetze$ | async">
-    {{ s.bezeichnung }} {{ s.prozentsatz }}
-    <button (click)="editSteuersatz(s)">Bearbeiten</button>
-    <button (click)="deleteSteuersatz(s.id)">Löschen</button>
-  </li>
+  @for (s of steuersaetze(); track s.id) {
+    <li>
+      {{ s.bezeichnung }} {{ s.prozentsatz }}
+      <button (click)="editSteuersatz(s)">Bearbeiten</button>
+      <button (click)="deleteSteuersatz(s.id)">Löschen</button>
+    </li>
+  }
 </ul>
 
 <h3>{{ form.value.id === 0 ? 'Neuer Steuersatz' : 'Steuersatz bearbeiten' }}</h3>
 
 <form [formGroup]="form" (ngSubmit)="saveSteuersatz()">
-
   <label>
     Bezeichnung:
     <input formControlName="bezeichnung" />
-    <span *ngIf="form.controls.bezeichnung.invalid && form.controls.bezeichnung.touched">
-      Eine Bezeichnung ist erforderlich.
-    </span>
+    @if (form.controls.bezeichnung.invalid && form.controls.bezeichnung.touched) {
+      <span>Eine Bezeichnung ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Prozentsatz:
     <input type="number" formControlName="prozentsatz" />
-    <span *ngIf="form.controls.prozentsatz.invalid && form.controls.prozentsatz.touched">
-      Der Prozentsatz muss größer als 0 sein.
-    </span>
+    @if (form.controls.prozentsatz.invalid && form.controls.prozentsatz.touched) {
+      <span>Der Prozentsatz muss größer als 0 sein.</span>
+    }
   </label><br />
 
   <button type="submit" [disabled]="form.invalid">Speichern</button>
   <button type="button" (click)="form.reset()">Abbrechen</button>
-
 </form>
