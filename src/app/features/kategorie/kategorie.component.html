@@ -1,6 +1,6 @@
 <h2>Kategorieliste</h2>
 <ul>
-  @for (k of kategorien$ | async; track k.id) {
+  @for (k of kategorien(); track k.id) {
     <li>
       {{ k.kategorienummer }} {{ k.kategorie }}
       <button (click)="editKategorie(k)">Bearbeiten</button>

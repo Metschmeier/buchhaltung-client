@@ -20,7 +20,8 @@ interface KategorieForm {
 export class KategorieComponent implements OnInit {
   private kategorieFacade = inject(KategorieFacade);
 
-  kategorien$ = this.kategorieFacade.kategorien$;
+  // Signal statt Observable:
+  kategorien = this.kategorieFacade.kategorien;
 
   form: FormGroup<KategorieForm> = new FormGroup<KategorieForm>({
     id: new FormControl(0, { nonNullable: true }),
@@ -29,7 +30,6 @@ export class KategorieComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // kein manuelles Laden mehr nötig, da kategorien$ direkt aus Facade kommt
   }
 
   saveKategorie(): void {
@@ -38,13 +38,9 @@ export class KategorieComponent implements OnInit {
     const kategorie: Kategorie = this.form.getRawValue();
 
     if (kategorie.id === 0) {
-      this.kategorieFacade.create(kategorie).subscribe(() => {
-        this.form.reset();
-      });
+      this.kategorieFacade.create(kategorie).subscribe(() => this.form.reset());
     } else {
-      this.kategorieFacade.update(kategorie.id, kategorie).subscribe(() => {
-        this.form.reset();
-      });
+      this.kategorieFacade.update(kategorie.id, kategorie).subscribe(() => this.form.reset());
     }
   }
 

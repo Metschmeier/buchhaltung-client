@@ -1,6 +1,6 @@
 <h2>Kostenstelleliste</h2>
 <ul>
-  @for (ks of kostenstellen$ | async; track ks.id) {
+  @for (ks of kostenstellen(); track ks.id) {
     <li>
       {{ ks.kostenstelle }} {{ ks.beschreibung }}
       <button (click)="editKostenstelle(ks)">Bearbeiten</button>
