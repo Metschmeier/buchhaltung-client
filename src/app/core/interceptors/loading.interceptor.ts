@@ -2,17 +2,17 @@ import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { LoadingService } from '../services/loading.service';
-import { catchError, finalize, tap, throwError } from 'rxjs';
+import { catchError, finalize, tap } from 'rxjs';
 
 export const httpLoadingInterceptor: HttpInterceptorFn = (req, next) => {
   const loadingService = inject(LoadingService);
   const toastr = inject(ToastrService);
 
-  loadingService.setLoading(true);
+  loadingService.showLoadingWithDelay(200);
 
   return next(req).pipe(
     tap(() => {
-      // optional: hier kannst du bei Erfolg was machen
+      // optionaler Erfolgscode
     }),
     catchError(error => {
       if (error.status === 400) {
@@ -24,10 +24,10 @@ export const httpLoadingInterceptor: HttpInterceptorFn = (req, next) => {
       } else {
         toastr.error('Unbekannter Fehler');
       }
-      return throwError(() => error);
+      throw error;
     }),
     finalize(() => {
-      loadingService.setLoading(false);
+      loadingService.hideLoading();
     })
   );
 };

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoadingService } from '../../core/services/loading.service';
 
@@ -11,5 +11,5 @@ import { LoadingService } from '../../core/services/loading.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoadingComponent {
-  constructor(public loadingService: LoadingService) {}
+  loadingService = inject(LoadingService);
 }
