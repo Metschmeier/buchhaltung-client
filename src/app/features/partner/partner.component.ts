@@ -23,7 +23,6 @@ interface PartnerForm {
 export class PartnerComponent implements OnInit {
   private partnerFacade = inject(PartnerFacade);
 
-  // Signal statt Observable:
   partners = this.partnerFacade.partners;
 
   form: FormGroup<PartnerForm> = new FormGroup<PartnerForm>({

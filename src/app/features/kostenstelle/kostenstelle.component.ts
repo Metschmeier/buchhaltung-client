@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { KostenstelleFacade } from '../../core/facades/kostenstelle.facade';
-import { Kostenstelle } from '../../core/types/kostenstelle.types';
+import { Kostenstelle } from '../../core/types/kostenstelle.type';
 
 interface KostenstelleForm {
   id: FormControl<number>;

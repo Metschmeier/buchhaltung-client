@@ -3,10 +3,10 @@ export interface Buchung {
   datum: Date;
   typ: string;
   beschreibung: string;
-  betragnetto: number;
+  betragNetto: number;
   locked: boolean;
-  steuersatzid: number;
-  partnerid: number;
-  kostenstelleid: number;
-  kategorieid: number;
+  steuersatzId: number;
+  partnerId: number;
+  kostenstelleId: number;
+  kategorieId: number;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Kostenstelle } from '../types/kostenstelle.types'; 
+import { Kostenstelle } from '../types/kostenstelle.type'; 
 
 @Injectable({
   providedIn: 'root'
