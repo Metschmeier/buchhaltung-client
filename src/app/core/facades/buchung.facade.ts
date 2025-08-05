@@ -12,7 +12,6 @@ export class BuchungFacade {
   private _buchungen = signal<Buchung[]>([]);
   readonly buchungen: Signal<Buchung[]> = this._buchungen.asReadonly();
 
-  // Bonus: computed Signal für Einkäufe
   readonly einkaeufe = computed(() =>
     this._buchungen().filter(b => b.typ === 'Einkauf')
   );

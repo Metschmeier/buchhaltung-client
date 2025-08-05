@@ -40,10 +40,10 @@ export class BuchungComponent implements OnInit {
   readonly buchungen = this.buchungFacade.buchungen;
   readonly einkaeufe = this.buchungFacade.einkaeufe;
 
-  kategorien$ = this.kategorieFacade.kategorien$;
-  partners$ = this.partnerFacade.partners$;
-  kostenstellen$ = this.kostenstelleFacade.kostenstellen$;
-  steuersaetze$ = this.steuersatzFacade.steuersaetze$;
+  readonly kategorien = this.kategorieFacade.kategorien;
+  readonly partners = this.partnerFacade.partners;
+  readonly kostenstellen = this.kostenstelleFacade.kostenstellen;
+  readonly steuersaetze = this.steuersatzFacade.steuersaetze;
 
   form: FormGroup<BuchungForm> = new FormGroup<BuchungForm>({
     id: new FormControl(0, { nonNullable: true }),
