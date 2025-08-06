@@ -1,6 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
+
 import { PartnerFacade } from '../../core/facades/partner.facade';
 import { Partner } from '../../core/types/partner.type';
 
@@ -18,12 +26,28 @@ interface PartnerForm {
   standalone: true,
   templateUrl: './partner.component.html',
   styleUrls: ['./partner.component.css'],
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatPaginatorModule,
+    MatSortModule
+  ]
 })
-export class PartnerComponent implements OnInit {
+export class PartnerComponent implements OnInit, AfterViewInit {
   private partnerFacade = inject(PartnerFacade);
 
-  partners = this.partnerFacade.partners;
+  displayedColumns = ['name', 'kontonummer', 'typ', 'eMail', 'aktionen'];
+  dataSource = new MatTableDataSource<Partner>();
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  private updateTableEffect = effect(() => {
+    this.dataSource.data = this.partnerFacade.partners();
+  });
 
   form: FormGroup<PartnerForm> = new FormGroup<PartnerForm>({
     id: new FormControl(0, { nonNullable: true }),
@@ -35,6 +59,12 @@ export class PartnerComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    // nichts nötig hier
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   savePartner(): void {
