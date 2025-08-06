@@ -15,11 +15,11 @@ interface BuchungForm {
   datum: FormControl<Date>;
   typ: FormControl<string>;
   beschreibung: FormControl<string>;
-  betragnetto: FormControl<number>;
-  partnerid: FormControl<number | null>;
-  kategorieid: FormControl<number | null>;
-  kostenstelleid: FormControl<number | null>;
-  steuersatzid: FormControl<number | null>;
+  betragNetto: FormControl<number>;
+  partnerId: FormControl<number | null>;
+  kategorieId: FormControl<number | null>;
+  kostenstelleId: FormControl<number | null>;
+  steuersatzId: FormControl<number | null>;
   locked: FormControl<boolean>;
 }
 
@@ -50,16 +50,15 @@ export class BuchungComponent implements OnInit {
     datum: new FormControl(new Date(), { validators: Validators.required, nonNullable: true }),
     typ: new FormControl('', { validators: Validators.required, nonNullable: true }),
     beschreibung: new FormControl('', { validators: Validators.required, nonNullable: true }),
-    betragnetto: new FormControl(0, { validators: [Validators.required, Validators.min(0.01)], nonNullable: true }),
-    partnerid: new FormControl<number | null>(null, { validators: Validators.required }),
-    kategorieid: new FormControl<number | null>(null, { validators: Validators.required }),
-    kostenstelleid: new FormControl<number | null>(null, { validators: Validators.required }),
-    steuersatzid: new FormControl<number | null>(null, { validators: Validators.required }),
+    betragNetto: new FormControl(0, { validators: [Validators.required, Validators.min(0.01)], nonNullable: true }),
+    partnerId: new FormControl<number | null>(null, { validators: Validators.required }),
+    kategorieId: new FormControl<number | null>(null, { validators: Validators.required }),
+    kostenstelleId: new FormControl<number | null>(null, { validators: Validators.required }),
+    steuersatzId: new FormControl<number | null>(null, { validators: Validators.required }),
     locked: new FormControl(false, { nonNullable: true })
   });
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   saveBuchung(): void {
     if (this.form.invalid) return;
@@ -68,10 +67,11 @@ export class BuchungComponent implements OnInit {
 
     const buchung: Buchung = {
       ...raw,
-      partnerid: raw.partnerid ?? 0,
-      kategorieid: raw.kategorieid ?? 0,
-      kostenstelleid: raw.kostenstelleid ?? 0,
-      steuersatzid: raw.steuersatzid ?? 0
+      partnerId: raw.partnerId ?? 0,
+      kategorieId: raw.kategorieId ?? 0,
+      kostenstelleId: raw.kostenstelleId ?? 0,
+      steuersatzId: raw.steuersatzId ?? 0,
+      betragNetto: raw.betragNetto ?? 0,
     };
 
     if (buchung.id === 0) {
@@ -87,11 +87,11 @@ export class BuchungComponent implements OnInit {
       datum: new Date(b.datum),
       typ: b.typ,
       beschreibung: b.beschreibung,
-      betragnetto: b.betragnetto,
-      partnerid: b.partnerid,
-      kategorieid: b.kategorieid,
-      kostenstelleid: b.kostenstelleid,
-      steuersatzid: b.steuersatzid,
+      betragNetto: b.betragNetto,
+      partnerId: b.partnerId,
+      kategorieId: b.kategorieId,
+      kostenstelleId: b.kostenstelleId,
+      steuersatzId: b.steuersatzId,
       locked: b.locked
     });
   }
@@ -104,5 +104,57 @@ export class BuchungComponent implements OnInit {
         }
       });
     }
+  }
+
+  exportCsv(): void {
+    const buchungen = this.buchungFacade.buchungen();
+    const kategorien = this.kategorieFacade.kategorien();
+    const partner = this.partnerFacade.partners();
+    const kostenstellen = this.kostenstelleFacade.kostenstellen();
+    const steuersaetze = this.steuersatzFacade.steuersaetze();
+
+    const kategorieMap = new Map(kategorien.map(k => [k.id, k]));
+    const partnerMap = new Map(partner.map(p => [p.id, p]));
+    const kostenstelleMap = new Map(kostenstellen.map(k => [k.id, k]));
+    const steuersatzMap = new Map(steuersaetze.map(s => [s.id, s]));
+
+    const header = 'Datum;Typ;Beschreibung;Betrag Netto;Kategorie;Partner;Kostenstelle;Steuersatz';
+
+    const csv = buchungen.map(b => {
+      const datum = b.datum ? new Date(b.datum).toLocaleDateString('de-AT') : '';
+      const typ = b.typ ?? '';
+      const beschreibung = b.beschreibung ?? '';
+      const betrag = (typeof b.betragNetto === 'number')
+        ? b.betragNetto.toLocaleString('de-AT', { minimumFractionDigits: 2 })
+        : '';
+
+      const kategorie = (b.kategorieId && b.kategorieId !== 0)
+        ? kategorieMap.get(b.kategorieId)?.kategorie ?? ''
+        : '';
+
+      const partnerName = (b.partnerId && b.partnerId !== 0)
+        ? partnerMap.get(b.partnerId)?.name ?? ''
+        : '';
+
+      const kostenstelleName = (b.kostenstelleId && b.kostenstelleId !== 0)
+        ? kostenstelleMap.get(b.kostenstelleId)?.kostenstelle ?? ''
+        : '';
+
+      const steuersatzName = (b.steuersatzId && b.steuersatzId !== 0)
+        ? steuersatzMap.get(b.steuersatzId)?.bezeichnung ?? ''
+        : '';
+
+      return [datum, typ, beschreibung, betrag, kategorie, partnerName, kostenstelleName, steuersatzName].join(';');
+    }).join('\r\n');
+
+    const blob = new Blob([header + '\n' + csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'buchungen.csv';
+    a.click();
+
+    window.URL.revokeObjectURL(url);
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, Signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { KostenstelleService } from '../services/kostenstelle.service';
-import { Kostenstelle } from '../types/kostenstelle.types';
+import { Kostenstelle } from '../types/kostenstelle.type';
 
 @Injectable({
   providedIn: 'root'

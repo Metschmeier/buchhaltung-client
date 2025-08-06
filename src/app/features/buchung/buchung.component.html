@@ -1,8 +1,9 @@
 <h2>Alle Buchungen</h2>
+<button (click)="exportCsv()">📥 Als CSV exportieren</button>
 <ul>
   @for (b of buchungen(); track b.id) {
     <li>
-      {{ b.datum | date }} - {{ b.beschreibung }} - {{ b.betragnetto | currency }}
+      {{ b.datum | date }} - {{ b.beschreibung }} - {{ b.betragNetto | currency }}
       <button (click)="editBuchung(b)">Bearbeiten</button>
       <button (click)="deleteBuchung(b.id)" [disabled]="b.locked">Löschen</button>
     </li>
@@ -13,7 +14,7 @@
 <ul>
   @for (e of einkaeufe(); track e.id) {
     <li>
-      {{ e.datum | date }} - {{ e.beschreibung }} - {{ e.betragnetto | currency }}
+      {{ e.datum | date }} - {{ e.beschreibung }} - {{ e.betragNetto | currency }}
     </li>
   }
 </ul>
@@ -50,60 +51,60 @@
 
   <label>
     Betrag netto:
-    <input type="number" formControlName="betragnetto" step="0.01" />
-    @if (form.controls.betragnetto.invalid && form.controls.betragnetto.touched) {
+    <input type="number" formControlName="betragNetto" step="0.01" />
+    @if (form.controls.betragNetto.invalid && form.controls.betragNetto.touched) {
       <span>Bitte einen positiven Betrag eingeben.</span>
     }
   </label><br />
 
   <label>
     Partner:
-    <select formControlName="partnerid">
+    <select formControlName="partnerId">
       <option value="">Bitte wählen</option>
       @for (p of partners(); track p.id) {
         <option [value]="p.id">{{ p.name }}</option>
       }
     </select>
-    @if (form.controls.partnerid.invalid && form.controls.partnerid.touched) {
+    @if (form.controls.partnerId.invalid && form.controls.partnerId.touched) {
       <span>Partner ist erforderlich.</span>
     }
   </label><br />
 
   <label>
     Kategorie:
-    <select formControlName="kategorieid">
+    <select formControlName="kategorieId">
       <option value="">Bitte wählen</option>
       @for (k of kategorien(); track k.id) {
         <option [value]="k.id">{{ k.kategorie }}</option>
       }
     </select>
-    @if (form.controls.kategorieid.invalid && form.controls.kategorieid.touched) {
+    @if (form.controls.kategorieId.invalid && form.controls.kategorieId.touched) {
       <span>Kategorie ist erforderlich.</span>
     }
   </label><br />
 
   <label>
     Kostenstelle:
-    <select formControlName="kostenstelleid">
+    <select formControlName="kostenstelleId">
       <option value="">Bitte wählen</option>
       @for (ks of kostenstellen(); track ks.id) {
         <option [value]="ks.id">{{ ks.kostenstelle }}</option>
       }
     </select>
-    @if (form.controls.kostenstelleid.invalid && form.controls.kostenstelleid.touched) {
+    @if (form.controls.kostenstelleId.invalid && form.controls.kostenstelleId.touched) {
       <span>Kostenstelle ist erforderlich.</span>
     }
   </label><br />
 
   <label>
     Steuersatz:
-    <select formControlName="steuersatzid">
+    <select formControlName="steuersatzId">
       <option value="">Bitte wählen</option>
       @for (st of steuersaetze(); track st.id) {
         <option [value]="st.id">{{ st.bezeichnung }} ({{ st.prozentsatz }}%)</option>
       }
     </select>
-    @if (form.controls.steuersatzid.invalid && form.controls.steuersatzid.touched) {
+    @if (form.controls.steuersatzId.invalid && form.controls.steuersatzId.touched) {
       <span>Steuersatz ist erforderlich.</span>
     }
   </label><br />
