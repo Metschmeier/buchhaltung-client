@@ -145,7 +145,7 @@ export class BuchungComponent implements OnInit {
         : '';
 
       return [datum, typ, beschreibung, betrag, kategorie, partnerName, kostenstelleName, steuersatzName].join(';');
-    }).join('\n');
+    }).join('\r\n');
 
     const blob = new Blob([header + '\n' + csv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
