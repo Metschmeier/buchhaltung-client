@@ -1,30 +1,57 @@
 <h2>Kategorieliste</h2>
-<ul>
-  @for (k of kategorien(); track k.id) {
-    <li>
-      {{ k.kategorienummer }} {{ k.kategorie }}
-      <button (click)="editKategorie(k)">Bearbeiten</button>
-      <button (click)="deleteKategorie(k.id)">Löschen</button>
-    </li>
-  }
-</ul>
 
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 full-width-table">
+
+  <!-- Kategorienummer -->
+  <ng-container matColumnDef="kategorieNummer">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Kategorienummer</th>
+    <td mat-cell *matCellDef="let kategorie">{{ kategorie.kategorieNummer }}</td>
+  </ng-container>
+
+  <!-- Kategorie -->
+  <ng-container matColumnDef="kategorie">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Kategorie</th>
+    <td mat-cell *matCellDef="let kategorie">{{ kategorie.kategorie }}</td>
+  </ng-container>
+
+  <!-- Aktionen -->
+  <ng-container matColumnDef="aktionen">
+    <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+    <td mat-cell *matCellDef="let kategorie">
+      <button mat-icon-button color="primary" (click)="editKategorie(kategorie)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="deleteKategorie(kategorie.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <!-- Header + Rows -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<!-- 🔽 Paginator -->
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+<!-- 🧾 Formular zum Erstellen / Bearbeiten -->
 <h3>{{ form.value.id === 0 ? 'Neue Kategorie' : 'Kategorie bearbeiten' }}</h3>
 
 <form [formGroup]="form" (ngSubmit)="saveKategorie()">
 
   <label>
-    KategorieNummer:
-    <input formControlName="kategorienummer" />
-    @if (form.controls.kategorienummer.invalid && form.controls.kategorienummer.touched && form.controls.kategorienummer.dirty) {
-      <span>Eine Kategorie Nummer ist erforderlich.</span>
+    Kategorienummer:
+    <input formControlName="kategorieNummer" />
+    @if (form.controls.kategorieNummer.invalid && (form.controls.kategorieNummer.touched || form.controls.kategorieNummer.dirty)) {
+      <span>Eine Kategorienummer ist erforderlich.</span>
     }
   </label><br />
 
   <label>
     Kategorie:
     <input formControlName="kategorie" />
-    @if (form.controls.kategorie.invalid && form.controls.kategorie.touched) {
+    @if (form.controls.kategorie.invalid && (form.controls.kategorie.touched || form.controls.kategorie.dirty)) {
       <span>Die Kategorie ist erforderlich.</span>
     }
   </label><br />

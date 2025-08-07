@@ -1,21 +1,49 @@
 <h2>Steuersatzliste</h2>
-<ul>
-  @for (s of steuersaetze(); track s.id) {
-    <li>
-      {{ s.bezeichnung }} {{ s.prozentsatz }}
-      <button (click)="editSteuersatz(s)">Bearbeiten</button>
-      <button (click)="deleteSteuersatz(s.id)">Löschen</button>
-    </li>
-  }
-</ul>
 
-<h3>{{ form.value.id === 0 ? 'Neuer Steuersatz' : 'Steuersatz bearbeiten' }}</h3>
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 full-width-table">
+
+  <!-- Bezeichnung -->
+  <ng-container matColumnDef="bezeichnung">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Bezeichnung</th>
+    <td mat-cell *matCellDef="let s">{{ s.bezeichnung }}</td>
+  </ng-container>
+
+  <!-- Prozentsatz -->
+  <ng-container matColumnDef="prozentsatz">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Prozentsatz (%)</th>
+    <td mat-cell *matCellDef="let s">{{ s.prozentsatz }}</td>
+  </ng-container>
+
+  <!-- Aktionen -->
+  <ng-container matColumnDef="aktionen">
+    <th mat-header-cell *matHeaderCellDef>Aktionen</th>
+    <td mat-cell *matCellDef="let s">
+      <button mat-icon-button color="primary" (click)="editSteuersatz(s)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="deleteSteuersatz(s.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <!-- Header + Rows -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+
+<!-- 🔽 Paginator -->
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+<!-- 🧾 Formular zum Erstellen / Bearbeiten -->
+<h3>{{ form.value.id === 0 ? 'Neuen Steuersatz erstellen' : 'Steuersatz bearbeiten' }}</h3>
 
 <form [formGroup]="form" (ngSubmit)="saveSteuersatz()">
+
   <label>
     Bezeichnung:
     <input formControlName="bezeichnung" />
-    @if (form.controls.bezeichnung.invalid && form.controls.bezeichnung.touched) {
+    @if (form.controls.bezeichnung.invalid && (form.controls.bezeichnung.touched || form.controls.bezeichnung.dirty)) {
       <span>Eine Bezeichnung ist erforderlich.</span>
     }
   </label><br />
@@ -23,11 +51,12 @@
   <label>
     Prozentsatz:
     <input type="number" formControlName="prozentsatz" />
-    @if (form.controls.prozentsatz.invalid && form.controls.prozentsatz.touched) {
+    @if (form.controls.prozentsatz.invalid && (form.controls.prozentsatz.touched || form.controls.prozentsatz.dirty)) {
       <span>Der Prozentsatz muss größer als 0 sein.</span>
     }
   </label><br />
 
   <button type="submit" [disabled]="form.invalid">Speichern</button>
   <button type="button" (click)="form.reset()">Abbrechen</button>
+
 </form>
