@@ -25,7 +25,6 @@ interface PartnerForm {
   selector: 'app-partner',
   standalone: true,
   templateUrl: './partner.component.html',
-  styleUrls: ['./partner.component.css'],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -59,7 +58,6 @@ export class PartnerComponent implements OnInit, AfterViewInit {
   });
 
   ngOnInit(): void {
-    // nichts nötig hier
   }
 
   ngAfterViewInit(): void {

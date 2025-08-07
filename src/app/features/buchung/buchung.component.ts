@@ -1,6 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 import { Buchung } from '../../core/types/buchung.type';
 
@@ -10,42 +17,50 @@ import { PartnerFacade } from '../../core/facades/partner.facade';
 import { KostenstelleFacade } from '../../core/facades/kostenstelle.facade';
 import { SteuersatzFacade } from '../../core/facades/steuersatz.facade';
 
-interface BuchungForm {
-  id: FormControl<number>;
-  datum: FormControl<Date>;
-  typ: FormControl<string>;
-  beschreibung: FormControl<string>;
-  betragNetto: FormControl<number>;
-  partnerId: FormControl<number | null>;
-  kategorieId: FormControl<number | null>;
-  kostenstelleId: FormControl<number | null>;
-  steuersatzId: FormControl<number | null>;
-  locked: FormControl<boolean>;
-}
-
 @Component({
   selector: 'app-buchung',
   standalone: true,
   templateUrl: './buchung.component.html',
-  styleUrls: ['./buchung.component.css'],
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatPaginatorModule,
+    MatSortModule
+  ],
 })
-export class BuchungComponent implements OnInit {
+export class BuchungComponent implements OnInit, AfterViewInit {
   private buchungFacade = inject(BuchungFacade);
   private kategorieFacade = inject(KategorieFacade);
   private partnerFacade = inject(PartnerFacade);
   private kostenstelleFacade = inject(KostenstelleFacade);
   private steuersatzFacade = inject(SteuersatzFacade);
 
-  readonly buchungen = this.buchungFacade.buchungen;
-  readonly einkaeufe = this.buchungFacade.einkaeufe;
-
   readonly kategorien = this.kategorieFacade.kategorien;
   readonly partners = this.partnerFacade.partners;
   readonly kostenstellen = this.kostenstelleFacade.kostenstellen;
   readonly steuersaetze = this.steuersatzFacade.steuersaetze;
 
-  form: FormGroup<BuchungForm> = new FormGroup<BuchungForm>({
+  // MatTable DataSource
+  displayedColumns = [
+    'datum',
+    'typ',
+    'beschreibung',
+    'betragNetto',
+    'partner',
+    'kategorie',
+    'kostenstelle',
+    'steuersatz',
+    'aktionen',
+  ];
+  dataSource = new MatTableDataSource<Buchung>([]);
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  form: FormGroup = new FormGroup({
     id: new FormControl(0, { nonNullable: true }),
     datum: new FormControl(new Date(), { validators: Validators.required, nonNullable: true }),
     typ: new FormControl('', { validators: Validators.required, nonNullable: true }),
@@ -55,10 +70,23 @@ export class BuchungComponent implements OnInit {
     kategorieId: new FormControl<number | null>(null, { validators: Validators.required }),
     kostenstelleId: new FormControl<number | null>(null, { validators: Validators.required }),
     steuersatzId: new FormControl<number | null>(null, { validators: Validators.required }),
-    locked: new FormControl(false, { nonNullable: true })
+    locked: new FormControl(false, { nonNullable: true }),
   });
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Reactive update of the table data whenever buchungen change
+    this.updateTable();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  private updateTable(): void {
+    const buchungen = this.buchungFacade.buchungen(); // assuming synchronous getter as in Partner example
+    this.dataSource.data = buchungen;
+  }
 
   saveBuchung(): void {
     if (this.form.invalid) return;
@@ -75,9 +103,15 @@ export class BuchungComponent implements OnInit {
     };
 
     if (buchung.id === 0) {
-      this.buchungFacade.create(buchung).subscribe(() => this.form.reset());
+      this.buchungFacade.create(buchung).subscribe(() => {
+        this.form.reset();
+        this.updateTable();
+      });
     } else {
-      this.buchungFacade.update(buchung.id, buchung).subscribe(() => this.form.reset());
+      this.buchungFacade.update(buchung.id, buchung).subscribe(() => {
+        this.form.reset();
+        this.updateTable();
+      });
     }
   }
 
@@ -92,7 +126,7 @@ export class BuchungComponent implements OnInit {
       kategorieId: b.kategorieId,
       kostenstelleId: b.kostenstelleId,
       steuersatzId: b.steuersatzId,
-      locked: b.locked
+      locked: b.locked,
     });
   }
 
@@ -102,6 +136,7 @@ export class BuchungComponent implements OnInit {
         if (this.form.value.id === id) {
           this.form.reset();
         }
+        this.updateTable();
       });
     }
   }
@@ -156,5 +191,22 @@ export class BuchungComponent implements OnInit {
     a.click();
 
     window.URL.revokeObjectURL(url);
+  }
+
+  getPartnerName(id: number | null): string {
+    return this.partners().find(p => p.id === id)?.name ?? '';
+  }
+
+  getKategorieName(id: number | null): string {
+    return this.kategorien().find(k => k.id === id)?.kategorie ?? '';
+  }
+
+  getKostenstelleName(id: number | null): string {
+    return this.kostenstellen().find(ks => ks.id === id)?.kostenstelle ?? '';
+  }
+
+  getSteuersatzBezeichnung(id: number | null): string {
+    const satz = this.steuersaetze().find(s => s.id === id);
+    return satz ? `${satz.bezeichnung} (${satz.prozentsatz}%)` : '';
   }
 }
