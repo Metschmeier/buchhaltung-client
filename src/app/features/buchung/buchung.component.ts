@@ -17,6 +17,19 @@ import { PartnerFacade } from '../../core/facades/partner.facade';
 import { KostenstelleFacade } from '../../core/facades/kostenstelle.facade';
 import { SteuersatzFacade } from '../../core/facades/steuersatz.facade';
 
+interface BuchungForm {
+  id: FormControl<number>;
+  datum: FormControl<Date>;
+  typ: FormControl<string>;
+  beschreibung: FormControl<string>;
+  betragNetto: FormControl<number>;
+  partnerId: FormControl<number | null>;
+  kategorieId: FormControl<number | null>;
+  kostenstelleId: FormControl<number | null>;
+  steuersatzId: FormControl<number | null>;
+  locked: FormControl<boolean>;
+}
+
 @Component({
   selector: 'app-buchung',
   standalone: true,
@@ -60,7 +73,7 @@ export class BuchungComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  form: FormGroup = new FormGroup({
+  form: FormGroup<BuchungForm> = new FormGroup<BuchungForm>({
     id: new FormControl(0, { nonNullable: true }),
     datum: new FormControl(new Date(), { validators: Validators.required, nonNullable: true }),
     typ: new FormControl('', { validators: Validators.required, nonNullable: true }),
@@ -74,7 +87,6 @@ export class BuchungComponent implements OnInit, AfterViewInit {
   });
 
   ngOnInit(): void {
-    // Reactive update of the table data whenever buchungen change
     this.updateTable();
   }
 
