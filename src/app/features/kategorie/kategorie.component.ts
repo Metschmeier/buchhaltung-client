@@ -5,13 +5,12 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 import { KategorieFacade } from '../../core/facades/kategorie.facade';
 import { Kategorie } from '../../core/types/kategorie.type';
-import { BaseCrudTableComponent } from '../../core/directives/base-crud-table.component';
-import { FormErrorComponent } from '../../core/shared/form-error/form-error.component';
 
 interface KategorieForm {
   id: FormControl<number>;
@@ -30,24 +29,17 @@ interface KategorieForm {
     MatButtonModule,
     MatIconModule,
     MatPaginatorModule,
-    MatSortModule,
-    FormErrorComponent
+    MatSortModule
   ]
 })
-export class KategorieComponent extends BaseCrudTableComponent<Kategorie> implements OnInit, AfterViewInit {
-  override loadData(): void {
-    this.updateTableFrom(this.kategorien());
-  }
-  protected onEdit(item: Kategorie): void {
-    this.editKategorie(item);
-  }
-  protected onDelete(id: number): void {
-    this.deleteKategorie(id);
-  }
-
+export class KategorieComponent implements OnInit, AfterViewInit {
   private kategorieFacade = inject(KategorieFacade);
 
-  override displayedColumns = ['kategorieNummer', 'kategorie', 'aktionen'];
+  displayedColumns = ['kategorieNummer', 'kategorie', 'aktionen'];
+  dataSource = new MatTableDataSource<Kategorie>();
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   kategorien = this.kategorieFacade.kategorien;
 
@@ -62,7 +54,11 @@ export class KategorieComponent extends BaseCrudTableComponent<Kategorie> implem
   });
 
   ngOnInit(): void {
-    this.loadData();
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   saveKategorie(): void {
@@ -71,9 +67,9 @@ export class KategorieComponent extends BaseCrudTableComponent<Kategorie> implem
     const kategorie: Kategorie = this.form.getRawValue();
 
     if (kategorie.id === 0) {
-      this.kategorieFacade.create(kategorie).subscribe(() => { this.form.reset(); this.loadData(); });
+      this.kategorieFacade.create(kategorie).subscribe(() => this.form.reset());
     } else {
-      this.kategorieFacade.update(kategorie.id, kategorie).subscribe(() => { this.form.reset(); this.loadData });
+      this.kategorieFacade.update(kategorie.id, kategorie).subscribe(() => this.form.reset());
     }
   }
 
@@ -87,7 +83,6 @@ export class KategorieComponent extends BaseCrudTableComponent<Kategorie> implem
         if (this.form.value.id === id) {
           this.form.reset();
         }
-        this.loadData()
       });
     }
   }

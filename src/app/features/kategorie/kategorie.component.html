@@ -18,10 +18,10 @@
   <ng-container matColumnDef="aktionen">
     <th mat-header-cell *matHeaderCellDef>Aktionen</th>
     <td mat-cell *matCellDef="let kategorie">
-      <button mat-icon-button color="primary" (click)="editItem(kategorie)">
+      <button mat-icon-button color="primary" (click)="editKategorie(kategorie)">
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-icon-button color="warn" (click)="deleteItem(kategorie.id)">
+      <button mat-icon-button color="warn" (click)="deleteKategorie(kategorie.id)">
         <mat-icon>delete</mat-icon>
       </button>
     </td>
@@ -43,19 +43,17 @@
   <label>
     Kategorienummer:
     <input formControlName="kategorieNummer" />
-    <app-form-error
-      [control]="form.controls.kategorieNummer"
-      errorKey="required"
-      message="Eine Kategorienummer ist erforderlich." />
+    @if (form.controls.kategorieNummer.invalid && (form.controls.kategorieNummer.touched || form.controls.kategorieNummer.dirty)) {
+      <span>Eine Kategorienummer ist erforderlich.</span>
+    }
   </label><br />
 
   <label>
     Kategorie:
     <input formControlName="kategorie" />
-    <app-form-error
-      [control]="form.controls.kategorie"
-      errorKey="required"
-      message="Die Kategorie ist erforderlich." />
+    @if (form.controls.kategorie.invalid && (form.controls.kategorie.touched || form.controls.kategorie.dirty)) {
+      <span>Die Kategorie ist erforderlich.</span>
+    }
   </label><br />
 
   <button type="submit" [disabled]="form.invalid">Speichern</button>
