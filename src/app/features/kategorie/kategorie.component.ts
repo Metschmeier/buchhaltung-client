@@ -5,12 +5,13 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 import { KategorieFacade } from '../../core/facades/kategorie.facade';
 import { Kategorie } from '../../core/types/kategorie.type';
+import { BaseCrudTableComponent } from '../../core/directives/base-crud-table.component';
+import { FormErrorComponent } from '../../core/shared/form-error/form-error.component';
 
 interface KategorieForm {
   id: FormControl<number>;
@@ -29,17 +30,24 @@ interface KategorieForm {
     MatButtonModule,
     MatIconModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    FormErrorComponent
   ]
 })
-export class KategorieComponent implements OnInit, AfterViewInit {
+export class KategorieComponent extends BaseCrudTableComponent<Kategorie> implements OnInit, AfterViewInit {
+  override loadData(): void {
+    this.updateTableFrom(this.kategorien());
+  }
+  protected onEdit(item: Kategorie): void {
+    this.editKategorie(item);
+  }
+  protected onDelete(id: number): void {
+    this.deleteKategorie(id);
+  }
+
   private kategorieFacade = inject(KategorieFacade);
 
-  displayedColumns = ['kategorieNummer', 'kategorie', 'aktionen'];
-  dataSource = new MatTableDataSource<Kategorie>();
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  override displayedColumns = ['kategorieNummer', 'kategorie', 'aktionen'];
 
   kategorien = this.kategorieFacade.kategorien;
 
@@ -54,11 +62,7 @@ export class KategorieComponent implements OnInit, AfterViewInit {
   });
 
   ngOnInit(): void {
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.loadData();
   }
 
   saveKategorie(): void {
@@ -67,9 +71,9 @@ export class KategorieComponent implements OnInit, AfterViewInit {
     const kategorie: Kategorie = this.form.getRawValue();
 
     if (kategorie.id === 0) {
-      this.kategorieFacade.create(kategorie).subscribe(() => this.form.reset());
+      this.kategorieFacade.create(kategorie).subscribe(() => { this.form.reset(); this.loadData(); });
     } else {
-      this.kategorieFacade.update(kategorie.id, kategorie).subscribe(() => this.form.reset());
+      this.kategorieFacade.update(kategorie.id, kategorie).subscribe(() => { this.form.reset(); this.loadData });
     }
   }
 
@@ -83,6 +87,7 @@ export class KategorieComponent implements OnInit, AfterViewInit {
         if (this.form.value.id === id) {
           this.form.reset();
         }
+        this.loadData()
       });
     }
   }
